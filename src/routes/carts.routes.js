@@ -2,7 +2,7 @@ import { Router } from "express";
 import CartManager from "../utils/cartsManager.js";
 
 const cartsRouter = Router();
-const cartManager = new CartManager("src/utils/carts.json");
+const cartManager = new CartManager("src/data/carts.json");
 
 cartsRouter.get("/", async (req, res) => {
     const carts = await cartManager.getCarts();
@@ -13,7 +13,7 @@ cartsRouter.get("/:cId", async (req, res) => {
     const { cId } = req.params;
     const cartById = await cartManager.getCartById(cId);
     if(!cartById) {
-       return res.status(404).send({message: "cart not found"});
+        return res.status(404).send({message: "cart not found"});
     }
     res.send(cartById);
 });

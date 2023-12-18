@@ -2,7 +2,7 @@ import { Router } from "express";
 import ProductManager from "../utils/productManager.js";
 
 const productsRouter = Router();
-const productManager = new ProductManager("./products.json");
+const productManager = new ProductManager("src/data/products.json");
 
 productsRouter.get("/", async (req, res) => {
     const {limit} = req.query;
