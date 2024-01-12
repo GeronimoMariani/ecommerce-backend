@@ -1,23 +1,27 @@
 import { Router } from "express";
-import ProductManager from "../utils/productManager.js";
+import { productsModel } from "../dao/models/products.model.js";
 
 const productsRouter = Router();
-const productManager = new ProductManager("src/data/products.json");
 
 productsRouter.get("/", async (req, res) => {
     const {limit} = req.query;
-    const products = await productManager.getProducts();
-    if (!limit) {
-        return res.send(products);
+    const products = await productsModel.find();
+    try {
+        if (!limit) {
+            return res.send(products);
+        }
+        const limitProducts = products.slice(0, limit);
+        res.send(limitProducts);
+    } catch (error) {
+        console.error(error);
+        res.status(404).send({message: "Products not found"});
     }
-    const limitProducts = products.slice(0, limit);
-    res.send(limitProducts);
 });
 
 productsRouter.get("/:pid", async (req, res) => {
+    const {pid} = req.params;
     try {
-        const {pid} = req.params;
-        const products = await productManager.getProductById(parseInt(pid));
+        const products = await productsModel.findOne({_id: pid});
         res.send(products);
     } catch (error) {
         console.error(error);
@@ -28,19 +32,19 @@ productsRouter.get("/:pid", async (req, res) => {
 productsRouter.post("/", async (req, res) => {
     const newProduct = req.body;
     try {
-        const addProduct = await productManager.addProduct(newProduct);
-        res.send({message: "Product added"});
+        const addProduct = await productsModel.create(newProduct);
+        res.status(201).send({message: "Product added"});
     } catch (error) {
-        res.send({message: "Error adding product"});
+        res.status(400).send({message: "Error adding product"});
         console.log(error);
     }
 });
 
 productsRouter.put("/:pId", async (req, res) => {
+    const { pId } = req.params;
+    const updateProduct = req.body;
     try {
-        const { pId } = req.params;
-        const updateProduct = req.body;
-        const products = await productManager.updateProduct(updateProduct, pId);
+        const products = await productsModel.updateOne({_id: pId}, updateProduct);
         res.send({message: "Product updated"});
     } catch (error) {
         console.error(error);
@@ -50,8 +54,16 @@ productsRouter.put("/:pId", async (req, res) => {
 
 productsRouter.delete("/:pId", async (req, res) => {
     const { pId } = req.params;
-    const deleteProduct = await productManager.deleteProduct(pId);
-    res.send({message: "Product deleted"});
+    try {
+        const deleteProduct = await productsModel.deleteOne({_id: pId});
+        if (deleteProduct.deletedCount === 0) {
+            return res.status(404).send({message: "Product not found"})
+        }
+        res.send({message: "Product deleted"});
+    } catch (error) {
+        console.error(error);
+        res.status(404).send({message: "Product not found"});
+    }
 });
 
 export default productsRouter;

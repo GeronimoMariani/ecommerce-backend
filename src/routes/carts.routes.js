@@ -1,12 +1,18 @@
 import { Router } from "express";
-import CartManager from "../utils/cartsManager.js";
+import CartManager from "../dao/cartsManager.js";
+import { cartsModel } from "../dao/models/carts.model.js";
 
 const cartsRouter = Router();
 const cartManager = new CartManager("src/data/carts.json");
 
 cartsRouter.get("/", async (req, res) => {
-    const carts = await cartManager.getCarts();
-    res.send(carts);
+    const carts = await cartsModel.find();
+    try {
+        res.send(carts);
+    } catch (error) {
+        console.error(error);
+        res.status(404).send({message: "Carts not found"});
+    }
 });
 
 cartsRouter.get("/:cId", async (req, res) => {
@@ -19,16 +25,31 @@ cartsRouter.get("/:cId", async (req, res) => {
 });
 
 cartsRouter.post("/", async (req, res) => {
-    const cartAdded = await cartManager.addCarts();
-    if(!cartAdded) {
-        return res.status(400).send({message: "error: cart not added"});
+    const newCart = req.body;
+    const cartAdded = await cartsModel.create(newCart);
+    try {
+        res.send({message: "cart added"});
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({message: "error: cart not added"});
     }
-    res.send({message: "cart added"});
 });
 
-cartsRouter.post("/:cId/product/:pId", async (req, res) => {
+cartsRouter.put("/:cId/product/:pId", async (req, res) => {
     const { cId, pId } = req.params;
-    const productAddedToCart = await cartManager.addProductsToCart(pId, cId);
+    const carts = await cartsModel.find();
+    const updatedCarts = carts.map(cart => {
+        if(cart._id === cId) {
+            const existingProduct = cart.products.find(p => p.id === pId);
+            if(existingProduct) {
+                existingProduct.quantity++;
+            } else {
+                cart.products = [...cart.products, {id: pId, quantity: 1}];
+            }
+        }
+        return cart;
+    });
+    const productAddedToCart = await cartsModel.updateOne({_id: cId, products: updatedCarts});
     if(!productAddedToCart) {
         return res.status(400).send({message: "error: product not added"});
     }

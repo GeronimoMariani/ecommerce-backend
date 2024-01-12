@@ -4,7 +4,8 @@ import handlebars from "express-handlebars";
 import productsRouter from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import viewsRouter from "./routes/views.routes.js";
-import ProductManager from "./utils/productManager.js";
+import ProductManager from "./dao/productManager.js";
+import mongoose from "mongoose";
 
 const productManager = new ProductManager("src/data/products.json");
 
@@ -21,6 +22,8 @@ app.set("view engine", "handlebars");
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+
+mongoose.connect("mongodb+srv://geronimomariani:Gero_421869@coder-backend.639rc1a.mongodb.net/ecommerce");
 
 
 const httpServer = app.listen(PORT, () => {
