@@ -28,32 +28,77 @@ cartsRouter.post("/", async (req, res) => {
     const newCart = req.body;
     const cartAdded = await cartsModel.create(newCart);
     try {
-        res.send({message: "cart added"});
+        res.status(201).send({message: "cart added"});
     } catch (error) {
         console.error(error);
         res.status(400).send({message: "error: cart not added"});
     }
 });
 
-cartsRouter.put("/:cId/product/:pId", async (req, res) => {
+cartsRouter.post("/:cId/product/:pId", async (req, res) => {
     const { cId, pId } = req.params;
-    const carts = await cartsModel.find();
-    const updatedCarts = carts.map(cart => {
-        if(cart._id === cId) {
-            const existingProduct = cart.products.find(p => p.id === pId);
-            if(existingProduct) {
-                existingProduct.quantity++;
-            } else {
-                cart.products = [...cart.products, {id: pId, quantity: 1}];
-            }
+    try {
+        const cart = await cartsModel.findOne({_id: cId});
+        const existingProduct = cart.products.find(product => product.product.toString() === pId);
+        if (existingProduct) {
+            existingProduct.quantity++;
+        } else {
+            cart.products.push({ product: pId });
         }
-        return cart;
-    });
-    const productAddedToCart = await cartsModel.updateOne({_id: cId, products: updatedCarts});
-    if(!productAddedToCart) {
-        return res.status(400).send({message: "error: product not added"});
+        await cartsModel.updateOne({_id: cId}, cart);
+        res.send({message: "cart updated"});
+    } catch (error) {
+        console.error(error);
+        res.status(404).send({message: "error: cart not found"});
     }
-    res.send({message: "product added to cart"});
+});
+
+cartsRouter.put("/:cId", async (req, res) => {
+    const { cId } = req.params;
+    const cartUpdated = req.body;
+    try {
+        await cartsModel.updateOne({_id: cId}, cartUpdated);
+        res.send({message: "cart updated"});
+    } catch (error) {
+        console.error(error);
+        res.status(404).send({message: "error: cart not found"});
+    }
+});
+
+cartsRouter.put("/:cId/product/pId", async (req, res,) => {
+    const { cId, pId } = req.params;
+    const quantityUpdated = req.body;
+    try {
+        const cart = await cartsModel.findOne({_id: cId});
+        const existingProduct = cart.products.find(product => product.product.toString() === pId);
+        if (existingProduct) {
+            existingProduct.quantity = quantityUpdated;
+            res.send({message: "Product updated"});
+        } else {
+            res.status(404).send({message: "Error: Product not found"});
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(404).send({message: "error: cart not found"});
+    }
+});
+
+cartsRouter.delete("/:cId/product/:pId", async (req, res) => {
+    const { cId, pId } = req.params;
+    try {
+        const cart = await cartsModel.findOne({_id: cId});
+        const existingProduct = cart.products.find(product => product.product.toString() === pId);
+        if (existingProduct) {
+            cart.products = cart.products.filter(product => product.product.toString() !== pId);
+            await cart.save();
+            res.send({message: "product deleted"});
+        } else {
+            res.status(404).send({message: "Error: Product not found"});
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(404).send({message: "Error: Cart not found"});
+    }
 });
 
 export default cartsRouter;

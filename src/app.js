@@ -23,11 +23,15 @@ app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 
-mongoose.connect("mongodb+srv://geronimomariani:Gero_421869@coder-backend.639rc1a.mongodb.net/ecommerce");
-
-
-const httpServer = app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
+const httpServer = app.listen(PORT, async () => {
+    try {
+        await mongoose.connect(
+        'mongodb+srv://geronimomariani:Gero_421869@coder-backend.639rc1a.mongodb.net/ecommerce'
+        );
+        console.log(`Server listening on ${PORT}`);
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 
