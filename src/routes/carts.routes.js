@@ -65,21 +65,22 @@ cartsRouter.put("/:cId", async (req, res) => {
     }
 });
 
-cartsRouter.put("/:cId/product/pId", async (req, res,) => {
+cartsRouter.put("/:cId/product/:pId", async (req, res) => {
     const { cId, pId } = req.params;
-    const quantityUpdated = req.body;
+    const { quantity } = req.body;
     try {
-        const cart = await cartsModel.findOne({_id: cId});
-        const existingProduct = cart.products.find(product => product.product.toString() === pId);
-        if (existingProduct) {
-            existingProduct.quantity = quantityUpdated;
-            res.send({message: "Product updated"});
+        const cart = await cartsModel.findById(cId);
+        const productIndex = cart.products.findIndex(product => product.product.equals(pId));
+        if (productIndex !== -1) {
+            cart.products[productIndex].quantity = quantity;
+            await cart.save();
+            res.send({ message: "Product updated" });
         } else {
-            res.status(404).send({message: "Error: Product not found"});
+            res.status(404).send({ message: "Error: Product not found" });
         }
     } catch (error) {
         console.error(error);
-        res.status(404).send({message: "error: cart not found"});
+        res.status(404).send({ message: "Error: Cart not found" });
     }
 });
 
