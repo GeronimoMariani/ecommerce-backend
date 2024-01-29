@@ -1,13 +1,13 @@
 import { Router } from "express";
-import ProductManager from "../dao/productManager.js";
-import { productsModel } from "../dao/models/products.model.js";
-import { cartsModel } from "../dao/models/carts.model.js";
+import { productsModel } from "../models/products.model.js";
+import { cartsModel } from "../models/carts.model.js";
+import { checkAuth, checkExistingUser } from "../middlewares/auth.js";
 
 const viewsRouter = Router();
-const productsManager = new ProductManager("src/data/products.json");
 
-viewsRouter.get("/products", async (req, res) => {
+viewsRouter.get("/products", checkAuth, async (req, res) => {
     const { page } = req.query;
+    const { user } = req.session;
     try {
         const pageNumber = page ? +page : 1;
         const products = await productsModel.paginate({}, {limit: 5, page: pageNumber});
@@ -15,7 +15,7 @@ viewsRouter.get("/products", async (req, res) => {
         const nextPage = pageNumber + 1;
         products.prevLink = `/products?page=${prevPage}`;
         products.nextLink = `/products?page=${nextPage}`;
-        res.render("products", { products });
+        res.render("products", { products, user: user });
     } catch (error) {
         console.error(error);
         res.status(400).send(error);
@@ -34,11 +34,18 @@ viewsRouter.get("/carts/:cId", async (req, res) => {
 });
 
 viewsRouter.get("/", async (req, res) => {
-    const products = await productsManager.getProducts();
-    res.render("index", { products });
+    res.render("index");
 });
 
-viewsRouter.get("/realtimeproducts", async (req, res) => {
+viewsRouter.get("/login", checkExistingUser, (req, res) => {
+    res.render("login");
+});
+
+viewsRouter.get("/register", checkExistingUser, (req, res) => {
+    res.render("register");
+});
+
+/* viewsRouter.get("/realtimeproducts", async (req, res) => {
     const products = await productsManager.getProducts();
     res.render("realTimeProducts");
 });
@@ -58,6 +65,6 @@ viewsRouter.delete("/realtimeproducts/:pId", async (req, res) => {
     const { pId } = req.params;
     const deleteProduct = await productsManager.deleteProduct(pId);
     res.send({message: "Product deleted"});
-});
+}); */
 
 export default viewsRouter;

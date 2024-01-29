@@ -17,6 +17,27 @@ ul {
 
 a {
     text-decoration: none;
+    color: black;
+}
+
+/* Nav */
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user {
+    display: flex;
+}
+
+.user > h2 {
+    margin-right: 50px;
+}
+
+.user > button {
+    margin-right: 50px;
 }
 
 /* Item detail */
@@ -65,3 +86,78 @@ a {
     display: flex;
     justify-content: center;
 }
+
+/* Login */
+
+.login {
+    width: 500px;
+    height: auto;
+    margin: 100px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+}
+
+.login > h1 {
+    margin: 1rem;
+}
+
+.login > form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login > form > * {
+    margin: 0.4rem;
+}
+
+.login > form > input {
+    padding: 0.5rem;
+}
+
+.login > form > button {
+    padding: 0.6rem;
+    margin: 1rem;
+}
+
+/* Register */
+
+.register {
+    width: 500px;
+    height: auto;
+    margin: 100px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+}
+
+.register > h1 {
+    margin: 1rem;
+}
+
+.register > form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.register > form > * {
+    margin: 0.4rem;
+}
+
+.register > form > input {
+    padding: 0.5rem;
+}
+
+.register > form > button {
+    padding: 0.6rem;
+    margin: 1rem;
+}
+

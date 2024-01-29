@@ -1,4 +1,4 @@
-const socket = io();
+/* const socket = io();
 
 const listProducts = document.getElementById("list");
 
@@ -11,6 +11,19 @@ socket.on("products", (data) => {
         listProducts.appendChild(li);
         listProducts.appendChild(br);
     });
+}); */
+
+const logoutBtn = document.getElementById("logout-btn");
+
+logoutBtn.addEventListener("click", async () => {
+    const result = await fetch("http://localhost:8080/api/sessions/logout", {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const { redirect } = await result.json();
+    window.location.href = redirect;
 });
 
 

@@ -1,9 +1,7 @@
 import { Router } from "express";
-import CartManager from "../dao/cartsManager.js";
-import { cartsModel } from "../dao/models/carts.model.js";
+import { cartsModel } from "../models/carts.model.js";
 
 const cartsRouter = Router();
-const cartManager = new CartManager("src/data/carts.json");
 
 cartsRouter.get("/", async (req, res) => {
     const carts = await cartsModel.find();
@@ -17,7 +15,7 @@ cartsRouter.get("/", async (req, res) => {
 
 cartsRouter.get("/:cId", async (req, res) => {
     const { cId } = req.params;
-    const cartById = await cartManager.getCartById(cId);
+    const cartById = await cartsModel.findById(cId);
     if(!cartById) {
         return res.status(404).send({message: "cart not found"});
     }

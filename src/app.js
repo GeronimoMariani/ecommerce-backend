@@ -4,16 +4,26 @@ import handlebars from "express-handlebars";
 import productsRouter from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import viewsRouter from "./routes/views.routes.js";
-import ProductManager from "./dao/productManager.js";
 import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
+import session from "express-session";
+import sessionRouter from "./routes/session.routes.js";
 
-const productManager = new ProductManager("src/data/products.json");
 
 const PORT = 8080;
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+app.use(session({
+    secret: "ecommerce-backend",
+    store: MongoStore.create({
+        mongoUrl: "mongodb+srv://geronimomariani:Gero_421869@coder-backend.639rc1a.mongodb.net/ecommerce"
+    }),
+    resave: true,
+    saveUninitialized: true
+}))
 
 const hbs = handlebars.create({
     runtimeOptions: {
@@ -28,6 +38,7 @@ app.set("view engine", "handlebars");
 app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/api/sessions", sessionRouter);
 
 const httpServer = app.listen(PORT, async () => {
     try {
@@ -41,7 +52,7 @@ const httpServer = app.listen(PORT, async () => {
 });
 
 
-const io = new Server(httpServer);
+/* const io = new Server(httpServer);
 
 io.on("connect", socket => {
     console.log("Cliente conectado");
@@ -55,4 +66,4 @@ const sendProducts = async (io) => {
     } catch (error) {
         console.log(error.message);
     }
-}
+} */
