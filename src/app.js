@@ -8,6 +8,8 @@ import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import session from "express-session";
 import sessionRouter from "./routes/session.routes.js";
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
 
 
 const PORT = 8080;
@@ -24,6 +26,10 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 const hbs = handlebars.create({
     runtimeOptions: {

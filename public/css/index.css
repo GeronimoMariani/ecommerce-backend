@@ -26,6 +26,9 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: black;
+    height: 100px;
+    color: white;
 }
 
 .user {
@@ -38,6 +41,7 @@ a {
 
 .user > button {
     margin-right: 50px;
+    padding: 0.6rem;
 }
 
 /* Item detail */
@@ -119,7 +123,7 @@ a {
     padding: 0.5rem;
 }
 
-.login > form > button {
+.login > form > .form-buttons > button {
     padding: 0.6rem;
     margin: 1rem;
 }
@@ -161,3 +165,39 @@ a {
     margin: 1rem;
 }
 
+/* Restore password */
+
+.restore-password {
+    width: 500px;
+    height: auto;
+    margin: 100px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+}
+
+.restore-password > h1 {
+    margin: 1rem;
+}
+
+.restore-password > form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.restore-password > form > * {
+    margin: 0.4rem;
+}
+
+.restore-password > form > input {
+    padding: 0.5rem;
+}
+
+.restore-password > form > button {
+    padding: 0.6rem;
+    margin: 1rem;
+}

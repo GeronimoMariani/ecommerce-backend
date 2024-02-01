@@ -45,6 +45,17 @@ viewsRouter.get("/register", checkExistingUser, (req, res) => {
     res.render("register");
 });
 
+viewsRouter.get("/restore-password", checkExistingUser, (req, res) => {
+    res.render("restore-password");
+});
+
+viewsRouter.get("/fail-register", (req, res) => {
+    res.render("fail-register");
+});
+
+viewsRouter.get("/fail-login", (req, res) => {
+    res.render("fail-login");
+});
 /* viewsRouter.get("/realtimeproducts", async (req, res) => {
     const products = await productsManager.getProducts();
     res.render("realTimeProducts");

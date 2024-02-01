@@ -1,58 +1,31 @@
 import { Router } from "express";
 import { userModel } from "../models/user.model.js";
+import { createHash, isValidPassword } from "../utils/bcrypt.js";
+import passport from "passport";
 
 const sessionRouter = Router();
 
-sessionRouter.post("/register", async (req, res) => {
-    const { first_name, last_name, email, age, password } = req.body;
-    try {
-        const user = await userModel.create({
-            first_name, last_name, email, age, password
-        });
-        req.session.user = user;
-        res.redirect("/products");
-    } catch (error) {
-        console.error(error);
-        res.status(400).send({error});
+sessionRouter.post("/register", passport.authenticate("register", {failureRedirect: "/fail-register"}), async (req, res) => {
+    req.session.user = {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        age: req.user.age
     }
+    res.redirect("/products");
 });
 
-sessionRouter.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        if (email === "adminCoder@coder.com" && password === "adminCoder") {
-            const adminUser = await userModel.findOne({email: "adminCoder@coder.com"});
-            if (adminUser) {
-                req.session.user = adminUser;
-                res.redirect("/products");
-                return;
-            } else {
-                const newUserAdmin = await userModel.create({
-                    first_name: "Coder",
-                    last_name: "Admin",
-                    email: "adminCoder@coder.com" ,
-                    age: 0,
-                    password: "adminCoder",
-                    rol: "Admin"
-                });
-                req.session.user = newUserAdmin;
-                res.redirect("/products");
-                return;
-            }
-        }
-        const user = await userModel.findOne({email});
-        if(!user) {
-            return res.status(404).send({message: "User not found"});
-        }
-        if(user.password !== password) {
-            return res.status(201).send({message: "Invalid credentials"});
-        }
-        req.session.user = user;
-        res.redirect("/products");
-    } catch (error) {
-        console.error(error);
-        res.status(400).send(error);
+sessionRouter.post("/login", passport.authenticate("login", {failureRedirect: "/fail-login"}), async (req, res) => {
+    if (!req.user) {
+        return res.status(401).send({message: "Error with credentials"});
     }
+    req.session.user = {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        age: req.user.age
+    }
+    res.redirect("/products");
 });
 
 sessionRouter.post("/logout", async (req, res) => {
@@ -68,5 +41,29 @@ sessionRouter.post("/logout", async (req, res) => {
         res.status(400).send({error});
     }
 })
+
+sessionRouter.post("/restore-password", async (req, res) => { 
+    const { email, password } = req.body;
+    try {
+        const user = await userModel.findOne({email});
+        if (!user) {
+            return res.status(401).send({message: "Unauthorized"});
+        }
+        user.password = createHash(password);
+        await user.save();
+        res.redirect("/login");
+    } catch (error) {
+        console.error(error);
+        res.status(400).send({error});
+    }
+});
+
+sessionRouter.get("/github", passport.authenticate("github", { scope: ["user:email"] }), (req, res) => {
+});
+
+sessionRouter.get("/githubcallback", passport.authenticate("github", {failureRedirect: "/login"}), (req, res) => {
+    req.session.user = req.user;
+    res.redirect("/products");
+});
 
 export default sessionRouter;
