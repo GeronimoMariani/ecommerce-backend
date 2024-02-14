@@ -10,7 +10,8 @@ sessionRouter.post("/register", passport.authenticate("register", {failureRedire
         first_name: req.user.first_name,
         last_name: req.user.last_name,
         email: req.user.email,
-        age: req.user.age
+        age: req.user.age,
+        rol: req.user.rol
     }
     res.redirect("/products");
 });
@@ -23,7 +24,8 @@ sessionRouter.post("/login", passport.authenticate("login", {failureRedirect: "/
         first_name: req.user.first_name,
         last_name: req.user.last_name,
         email: req.user.email,
-        age: req.user.age
+        age: req.user.age,
+        rol: req.user.rol
     }
     res.redirect("/products");
 });

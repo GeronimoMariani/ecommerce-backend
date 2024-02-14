@@ -56,6 +56,12 @@ viewsRouter.get("/fail-register", (req, res) => {
 viewsRouter.get("/fail-login", (req, res) => {
     res.render("fail-login");
 });
+
+viewsRouter.get("/current", (req, res) => {
+    const { user } = req.session;
+    res.render("current", user);
+});
+
 /* viewsRouter.get("/realtimeproducts", async (req, res) => {
     const products = await productsManager.getProducts();
     res.render("realTimeProducts");
