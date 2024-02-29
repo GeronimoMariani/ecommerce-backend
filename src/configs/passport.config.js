@@ -3,7 +3,9 @@ import local, { Strategy } from "passport-local";
 import { userModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from "../utils/bcrypt.js";
 import { Strategy as GithubStrategy } from "passport-github2";
+import { getVariables } from "./config.js";
 
+const { githubClientId, githubClientSecret } = getVariables();
 const LocalStrategy = local.Strategy;
 
 const initializePassport = () => {
@@ -54,9 +56,9 @@ const initializePassport = () => {
 
     passport.use("github", new GithubStrategy(
         {
-            clientID: "Iv1.6521b55af8876018",
+            clientID: githubClientId,
             callbackURL: "http://localhost:8080/api/sessions/githubcallback",
-            clientSecret: "ad0e78445f862034f4e55c66756e8fabb9579b4b"
+            clientSecret: githubClientSecret
         },
         async (accessToken, refreshToken, profile, done) => {
             try {

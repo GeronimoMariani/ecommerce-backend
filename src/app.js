@@ -9,19 +9,19 @@ import MongoStore from "connect-mongo";
 import session from "express-session";
 import sessionRouter from "./routes/session.routes.js";
 import passport from "passport";
-import initializePassport from "./config/passport.config.js";
+import initializePassport from "./configs/passport.config.js";
+import { getVariables } from "./configs/config.js";
 
-
-const PORT = 8080;
+const { port, mongoUrl, secret } = getVariables();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.use(session({
-    secret: "ecommerce-backend",
+    secret: secret,
     store: MongoStore.create({
-        mongoUrl: "mongodb+srv://geronimomariani:Gero_421869@coder-backend.639rc1a.mongodb.net/ecommerce"
+        mongoUrl: mongoUrl
     }),
     resave: true,
     saveUninitialized: true
@@ -46,12 +46,10 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", sessionRouter);
 
-const httpServer = app.listen(PORT, async () => {
+const httpServer = app.listen(port, async () => {
     try {
-        await mongoose.connect(
-        'mongodb+srv://geronimomariani:Gero_421869@coder-backend.639rc1a.mongodb.net/ecommerce'
-        );
-        console.log(`Server listening on ${PORT}`);
+        await mongoose.connect(mongoUrl);
+        console.log(`Server on`);
     } catch (err) {
         console.log(err);
     }
