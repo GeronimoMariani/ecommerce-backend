@@ -1,6 +1,10 @@
 import Carts from "../dao/mongo/carts.mongo.js";
+import Products from "../dao/mongo/products.mongo.js";
+import Ticket from "../dao/mongo/tickets.mongo.js";
 
 const cartService = new Carts();
+const ticketService = new Ticket();
+const productService = new Products();
 
 export const getCarts = async (req, res) => {
     const carts = await cartService.getCarts();
@@ -85,4 +89,37 @@ export const deleteProductInCart = async (req, res) => {
     } else {
         res.status(404).send({message: "Error: Product not found"});
     }
+};
+
+export const purchaseCart = async (req, res) => {
+    const { cId } = req.params;
+    const cart = await cartService.getCartById(cId);
+    const productsNotPurchased = cart.products.filter(product => {
+        return product.product.stock < product.quantity;
+    });
+    const productsPurchased = cart.products.filter(product => {
+        return product.product.stock >= product.quantity;
+    });
+    if (productsNotPurchased.length > 0) {
+        cart.products = productsNotPurchased;
+        await cartService.updateCart(cId, cart);
+    }
+    const totalprice = productsPurchased.reduce((acc, product) => {
+        return acc + (product.product.price * product.quantity);
+    }, 0);
+    for (const product of productsPurchased) {
+        const remainingStock = product.product.stock - product.quantity;
+        const newStock = {
+            stock: remainingStock
+        }
+        await productService.updateProduct(product.product._id, newStock);
+    }
+    const newTicket = {
+        code: Math.floor(Math.random() * 9000000) + 1000000,
+        purchase_datatime: new Date(),
+        amount: totalprice,
+        purchaser: req.user.email
+    }
+    await ticketService.createTicket(newTicket);
+    return res.send({message: "Ticket create"});
 };

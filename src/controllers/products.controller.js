@@ -1,3 +1,4 @@
+import ProductDTO from "../dao/dtos/product.dto.js";
 import Products from "../dao/mongo/products.mongo.js";
 
 const productService = new Products();
@@ -21,7 +22,7 @@ export const getProductById = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-    const newProduct = req.body;
+    const newProduct = new ProductDTO(req.body);
     const addProduct = await productService.createProduct(newProduct);
     if (!addProduct) {
         return res.status(400).send({message: "Error adding product"});

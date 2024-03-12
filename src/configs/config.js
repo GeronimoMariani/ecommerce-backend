@@ -1,9 +1,7 @@
 import dotenv from "dotenv";
 
 export const getVariables = () => {
-    dotenv.config({
-        path: "src/.env"
-    });
+    dotenv.config();
 
     return {
         port: process.env.PORT,

@@ -49,7 +49,7 @@ export default class Products {
 
     updateProduct = async (id, product) => {
         try {
-            const result = await productsModel.updateOne({_id: id}, {$set: product});
+            const result = await productsModel.findOneAndUpdate({_id: id}, {$set: product});
             return result;
         } catch (error) {
             console.error(error);

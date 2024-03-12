@@ -4,9 +4,11 @@ import { userModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from "../utils/bcrypt.js";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { getVariables } from "./config.js";
+import Users from "../dao/mongo/users.mongo.js";
 
 const { githubClientId, githubClientSecret } = getVariables();
 const LocalStrategy = local.Strategy;
+const userService = new Users();
 
 const initializePassport = () => {
     passport.use("register", new LocalStrategy(
@@ -14,7 +16,7 @@ const initializePassport = () => {
         async (req, username, password, done) => {
             const { first_name, last_name, email, age } = req.body;
             try {
-                const user = await userModel.findOne({email: username});
+                const user = await userService.getUser(username);
                 if (user) {
                     console.log("User already registered");
                     return done(null, false);
@@ -26,7 +28,7 @@ const initializePassport = () => {
                     age,
                     password: createHash(password)
                 }
-                const result = await userModel.create(newUser);
+                const result = await userService.createUser(newUser);
                 return done(null, result);
             } catch (error) {
                 console.error(error);
@@ -39,7 +41,7 @@ const initializePassport = () => {
         {usernameField: "email"},
         async (username, password, done) => {
             try {
-                const user = await userModel.findOne({email: username});
+                const user = await userService.getUser(username);
                 if (!user) {
                     console.log("User not found");
                     return done(null, false);
@@ -62,7 +64,7 @@ const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                const user = await userModel.findOne({email: profile.username});
+                const user = await userService.getUser(profile.username);
                 if (!user) {
                     const newUser = {
                         first_name: profile._json.name.split(" ")[0],
@@ -71,7 +73,7 @@ const initializePassport = () => {
                         age: 0,
                         password: "Github"
                     }
-                    const result = await userModel.create(newUser);
+                    const result = await userService.createUser(newUser);
                     return done(null, result);
                 }
                 return done(null, user);
@@ -86,7 +88,7 @@ const initializePassport = () => {
     });
 
     passport.deserializeUser(async (id, done) => {
-        const user = await userModel.findOne({_id: id});
+        const user = await userService.getUserById(id);
         done(null, user);
     });
 }
