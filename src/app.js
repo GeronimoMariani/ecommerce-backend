@@ -11,6 +11,7 @@ import sessionRouter from "./routes/session.routes.js";
 import passport from "passport";
 import initializePassport from "./configs/passport.config.js";
 import { getVariables } from "./configs/config.js";
+import { ErrorHandler } from "./middlewares/error.js";
 
 const { port, mongoUrl, secret } = getVariables();
 const app = express();
@@ -45,6 +46,8 @@ app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", sessionRouter);
+
+app.use(ErrorHandler);
 
 const httpServer = app.listen(port, async () => {
     try {

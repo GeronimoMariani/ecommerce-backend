@@ -1,10 +1,12 @@
 import passport from "passport";
 import local, { Strategy } from "passport-local";
-import { userModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from "../utils/bcrypt.js";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { getVariables } from "./config.js";
 import Users from "../dao/mongo/users.mongo.js";
+import CustomErrors from "../service/errors/CustomError.js";
+import { userNotFound } from "../service/errors/info.js";
+import ErrorEnum from "../service/errors/error.enum.js";
 
 const { githubClientId, githubClientSecret } = getVariables();
 const LocalStrategy = local.Strategy;
@@ -21,15 +23,28 @@ const initializePassport = () => {
                     console.log("User already registered");
                     return done(null, false);
                 }
-                const newUser = {
-                    first_name,
-                    last_name,
-                    email,
-                    age,
-                    password: createHash(password)
+                if (username === "adminCoder@coder.com") {
+                    const newAdmin = {
+                        first_name,
+                        last_name,
+                        email,
+                        age,
+                        password: createHash(password),
+                        rol: "admin"
+                    }
+                    const result = await userService.createUser(newAdmin);
+                    return done(null, result);
+                }else {
+                    const newUser = {
+                        first_name,
+                        last_name,
+                        email,
+                        age,
+                        password: createHash(password)
+                    }
+                    const result = await userService.createUser(newUser);
+                    return done(null, result);
                 }
-                const result = await userService.createUser(newUser);
-                return done(null, result);
             } catch (error) {
                 console.error(error);
                 return done("Error creating user" + error);
@@ -43,7 +58,12 @@ const initializePassport = () => {
             try {
                 const user = await userService.getUser(username);
                 if (!user) {
-                    console.log("User not found");
+                    CustomErrors.createError({
+                        name: 'user not found',
+                        cause: userNotFound(),
+                        message: 'Error - user not found',
+                        code: ErrorEnum.USER_NOT_FOUND
+                    });
                     return done(null, false);
                 }
                 if (!isValidPassword(user, password)) {

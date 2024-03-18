@@ -1,6 +1,7 @@
 import Carts from "../dao/mongo/carts.mongo.js";
 import Products from "../dao/mongo/products.mongo.js";
 import Ticket from "../dao/mongo/tickets.mongo.js";
+import { v4 as uuidv4 } from 'uuid';
 
 const cartService = new Carts();
 const ticketService = new Ticket();
@@ -115,10 +116,13 @@ export const purchaseCart = async (req, res) => {
         await productService.updateProduct(product.product._id, newStock);
     }
     const newTicket = {
-        code: Math.floor(Math.random() * 9000000) + 1000000,
+        code: uuidv4(),
         purchase_datatime: new Date(),
         amount: totalprice,
         purchaser: req.user.email
+    }
+    if (totalprice === 0) {
+        return res.status(400).send({message: "Not create ticket"});
     }
     await ticketService.createTicket(newTicket);
     return res.send({message: "Ticket create"});
