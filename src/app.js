@@ -12,12 +12,16 @@ import passport from "passport";
 import initializePassport from "./configs/passport.config.js";
 import { getVariables } from "./configs/config.js";
 import { ErrorHandler } from "./middlewares/error.js";
+import { addLogger } from "./utils/logger.js";
+import testRouter from "./routes/test.routes.js";
 
 const { port, mongoUrl, secret } = getVariables();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+app.use(addLogger);
 
 app.use(session({
     secret: secret,
@@ -46,6 +50,7 @@ app.use("/", viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", sessionRouter);
+app.use("/api/test", testRouter);
 
 app.use(ErrorHandler);
 

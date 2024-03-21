@@ -11,8 +11,10 @@ export const getProducts = async (req, res) => {
     const { limit, sort, page, filter } = req.query;
     const products = await productService.getProductsPaginate(limit, sort, page, filter)
     if (!products) {
+        req.logger.error("Products not found");
         return res.status(404).send({message: "Products not found"});
     }
+    req.logger.info("Products found");
     return res.send(products);
 };
 
@@ -20,6 +22,7 @@ export const getProductById = async (req, res) => {
     const {pId} = req.params;
     const product = await productService.getProductById(pId);
     if (!product) {
+        req.logger.error("Product not found");
         CustomErrors.createError({
             name: "Find product failed",
             cause: productNotFound(pId),
@@ -27,6 +30,7 @@ export const getProductById = async (req, res) => {
             code: ErrorEnum.PRODUCT_NOT_FOUND,
         });
     }
+    req.logger.info("Product found");
     return res.send(product);
 };
 
@@ -42,8 +46,10 @@ export const createProduct = async (req, res) => {
     }
     const addProduct = await productService.createProduct(newProduct);
     if (!addProduct) {
+        req.logger.error("Error adding product");
         return res.status(400).send({message: "Error adding product"});
     }
+    req.logger.info("Product added");
     return res.status(201).send({message: "Product added"});
 };
 
@@ -52,8 +58,10 @@ export const updateProduct = async (req, res) => {
     const updateProduct = req.body;
     const product = await productService.updateProduct(pId, updateProduct);
     if (!product) {
+        req.logger.error("Product not found");
         return res.status(404).send({message:"Product not found"});
     }
+    req.logger.info("Product updated");
     return res.send({message: "Product updated"});
 };
 
@@ -61,8 +69,10 @@ export const deleteProduct = async (req, res) => {
     const { pId } = req.params;
     const deleteProduct = await productService.deleteProduct(pId);
     if (deleteProduct.deletedCount === 0) {
+        req.logger.error("Product not found");
         return res.status(404).send({message: "Product not found"})
     }
+    req.logger.info("Product deleted");
     return res.send({message: "Product deleted"});
 };
 
