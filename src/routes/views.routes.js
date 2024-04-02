@@ -49,6 +49,10 @@ viewsRouter.get("/restore-password", checkExistingUser, (req, res) => {
     res.render("restore-password");
 });
 
+viewsRouter.get("/forgot-password", (req, res) => {
+    res.render("forgot-password");
+});
+
 viewsRouter.get("/fail-register", (req, res) => {
     res.render("fail-register");
 });

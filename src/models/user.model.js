@@ -31,6 +31,9 @@ const userSchema = mongoose.Schema({
     rol: {
         type: String,
         default: "user"
+    },
+    tokenPassword: {
+        type: Object,
     }
 });
 
