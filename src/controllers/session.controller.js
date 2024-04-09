@@ -55,6 +55,10 @@ export const forgotPassword = async (req, res) => {
         const { email } = req.body;
         const tokenObj = generateToken();
         const user = await userService.getUser(email);
+        if (!user) {
+            const noUser = true;
+            return res.render("forgot-password", { noUser });
+        }
         await userService.updateUser(user._id, { tokenPassword: tokenObj });
         await mailingService.sendSimpleMail({
             from: "NodeMailer Contant",

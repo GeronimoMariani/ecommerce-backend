@@ -43,6 +43,12 @@ export const addProductToCart = async (req, res) => {
     const { cId, pId } = req.params;
     const cart = await cartService.getCartById(cId);
     const existingProduct = cart.products.find(product => product.product._id.toString() === pId);
+    if (req.user.rol === "premium") {
+        const existingProduct = cart.products.find(product => product.product._id.toString() === pId);
+        if (existingProduct.product.owner === req.user.email) {
+            return res.status(403).send({message: "Unauthorized"});
+        }
+    }
     if (existingProduct) {
         existingProduct.quantity++;
     } else {

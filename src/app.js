@@ -14,6 +14,7 @@ import { getVariables } from "./configs/config.js";
 import { ErrorHandler } from "./middlewares/error.js";
 import { addLogger } from "./utils/logger.js";
 import testRouter from "./routes/test.routes.js";
+import usersRouter from "./routes/users.routes.js";
 
 const { port, mongoUrl, secret } = getVariables();
 const app = express();
@@ -51,6 +52,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/test", testRouter);
+app.use("/api/users", usersRouter);
 
 app.use(ErrorHandler);
 

@@ -37,6 +37,22 @@ export const authorizeAdmin = (req, res, next) => {
     }
 };
 
+export const authorizeAdminAndPremium = (req, res, next) => {
+    if (req.session?.user?.rol === "admin" || req.session?.user?.rol === "premium" ) {
+        next();
+    } else {
+        return res.status(403).json({ error: 'No tienes permiso para acceder a esta funcionalidad.' });
+    }
+};
+
+export const authorizeUserAndPremium = (req, res, next) => {
+    if (req.session?.user?.rol === "user" || req.session?.user?.rol === "premium" ) {
+        next();
+    } else {
+        return res.status(403).json({ error: 'No tienes permiso para acceder a esta funcionalidad.' });
+    }
+};
+
 export const authorizeUser = (req, res, next) => {
     if (req.session?.user?.rol !== "user" ) {
         return res.status(403).json({ error: 'No tienes permiso para acceder a esta funcionalidad.' });
