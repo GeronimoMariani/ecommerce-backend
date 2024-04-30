@@ -15,7 +15,10 @@ export const register = (req, res) => {
         rol: req.user.rol
     }
     req.logger.info(`User registered: ${req.user.email}`);
-    res.redirect("/products");
+    res.json(req.session.user);
+    setTimeout(() => {
+        res.redirect("/products");
+    }, 100);
 };
 
 export const login = (req, res) => {

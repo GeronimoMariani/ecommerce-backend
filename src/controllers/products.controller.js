@@ -51,7 +51,7 @@ export const createProduct = async (req, res) => {
         return res.status(400).send({message: "Error adding product"});
     }
     req.logger.info("Product added");
-    return res.status(201).send({message: "Product added"});
+    return res.status(201).send({message: "Product added", payload: newProduct});
 };
 
 export const updateProduct = async (req, res) => {

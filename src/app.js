@@ -20,7 +20,7 @@ import testRouter from "./routes/test.routes.js";
 import usersRouter from "./routes/users.routes.js";
 import { swaggerConfig } from "./configs/swagger-config.js";
 
-const { port, mongoUrl, secret } = getVariables();
+const { port, mongoUrl, secret, nodeEnv, mongoUrlTest } = getVariables();
 const app = express();
 
 const specs = swaggerJSDoc(swaggerConfig);

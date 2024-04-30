@@ -5,8 +5,9 @@
   "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js"
+    "test": "mocha test/sessions.test.js",
+    "start": "node src/app.js",
+    "dev": "npx nodemon main"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +34,9 @@
     "winston": "^3.12.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1"
+    "@faker-js/faker": "^8.4.1",
+    "chai": "^5.1.0",
+    "mocha": "^10.4.0",
+    "supertest": "^6.3.4"
   }
 }

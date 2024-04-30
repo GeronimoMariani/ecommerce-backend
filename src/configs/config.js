@@ -5,7 +5,9 @@ export const getVariables = () => {
 
     return {
         port: process.env.PORT,
+        nodeEnv: process.env.NODE_ENV,
         mongoUrl: process.env.MONGO_URL,
+        mongoUrlTest: process.env.MONGO_URL_TEST,
         secret: process.env.SECRET_KEY,
         githubClientId: process.env.GITHUB_CLIENT_ID,
         githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
