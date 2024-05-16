@@ -1,0 +1,13 @@
+<h1>Mis documentos</h1>
+<form action="/api/users/{{_id}}/documents" method="post" enctype="multipart/form-data">
+    <label>Foto de perfil</label><input type="file" name="profile_image"><br>
+    <label>Foto de producto</label><input type="file" name="product_image"><br>
+    <h2>Documentos</h2>
+    <label>Identificación</label>
+    <input type="file" name="documents"><br>
+    <label>Comprobante de domicilio</label>
+    <input type="file" name="documents"><br>
+    <label>Comprobante de estado de cuenta</label>
+    <input type="file" name="documents"><br>
+    <button type="submit">Enviar</button>
+</form>

@@ -62,7 +62,7 @@ app.use("/api/sessions", sessionRouter);
 app.use("/api/test", testRouter);
 app.use("/api/users", usersRouter);
 
-app.use(ErrorHandler);
+/* app.use(ErrorHandler); */
 
 const httpServer = app.listen(port, async () => {
     try {

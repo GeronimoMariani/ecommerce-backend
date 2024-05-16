@@ -1,25 +1,10 @@
 import { Router } from "express";
-import Users from "../dao/mongo/users.mongo.js";
+import { documents, rolePremium } from "../controllers/users.controller.js";
+import { uploader } from "../utils/multer.js";
 
 const usersRouter = Router();
-const userService = new Users();
 
-usersRouter.get("/premium", async (req, res) => {
-    try {
-        const user = await userService.getUser(req.user.email);
-        if (req.user.rol === "premium") {
-            user.rol = "user"
-            user.save();
-            res.send({message: "Rol updated"});
-        } else {
-            user.rol = "premium"
-            user.save();
-            res.send({message: "Rol updated"});
-        }
-    } catch (error) {
-        req.logger.error(error);
-        res.status(400).send({error});
-    }
-});
+usersRouter.get("/premium/:uid", rolePremium);
+usersRouter.post("/:uid/documents", uploader.fields([{ name: 'profile_image', maxCount: 1}, { name: 'product_image', maxCount: 1}, { name: 'documents', maxCount: 3}]), documents);
 
 export default usersRouter;

@@ -2,7 +2,9 @@ import { Router } from "express";
 import { productsModel } from "../models/products.model.js";
 import { cartsModel } from "../models/carts.model.js";
 import { checkAuth, checkExistingUser } from "../middlewares/auth.js";
+import Users from "../dao/mongo/users.mongo.js";
 
+const userService = new Users();
 const viewsRouter = Router();
 
 viewsRouter.get("/products", checkAuth, async (req, res) => {
@@ -61,9 +63,20 @@ viewsRouter.get("/fail-login", (req, res) => {
     res.render("fail-login");
 });
 
-viewsRouter.get("/current", (req, res) => {
-    const { user } = req.session;
-    res.render("current", user);
+viewsRouter.get("/current", async (req, res) => {
+    const user = await userService.getUser(req.user.email);
+    let premium
+    if (user.rol === 'premium') {
+        premium = true;
+    } else {
+        premium = false;
+    }
+    res.render("current", {user: user, premium});
+});
+
+viewsRouter.get("/documents", async (req, res) => {
+    const user = await userService.getUser(req.user.email);
+    res.render('documents', user);
 });
 
 /* viewsRouter.get("/realtimeproducts", async (req, res) => {

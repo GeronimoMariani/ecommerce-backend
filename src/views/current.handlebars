@@ -1,5 +1,14 @@
-<h1>Nombre y apellido: {{first_name}} {{last_name}}</h1>
-<h2>Email: {{email}}</h2>
-<h2>Edad: {{age}}</h2>
-<h2>Rol: {{rol}}</h2>
+<h1>Nombre y apellido: {{user.first_name}} {{user.last_name}}</h1>
+<h2>Email: {{user.email}}</h2>
+<h2>Edad: {{user.age}}</h2>
+<h2>Rol: {{user.rol}}</h2>
+<button><a href="/documents">Mis documentos</a></button>
+{{#if premium}}
+    <button><a href="/api/users/premium/{{user._id}}">Quitar Premium</a></button>
+{{else}}
+    <button><a href="/api/users/premium/{{user._id}}">Hacerse Premium</a></button>
+{{/if}}
 <button><a href="/products">Volver</a></button>
+{{#if noDocuments}}
+    <p style="color: red;">Para ser premium tienes que cargar todos los documentos necesarios</p>
+{{/if}}

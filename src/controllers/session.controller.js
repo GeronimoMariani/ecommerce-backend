@@ -21,7 +21,7 @@ export const register = (req, res) => {
     }, 100);
 };
 
-export const login = (req, res) => {
+export const login = async (req, res) => {
     if (!req.user) {
         req.logger.error("Error with credentials");
         return res.status(401).send({message: "Error with credentials"});
@@ -33,6 +33,9 @@ export const login = (req, res) => {
         age: req.user.age,
         rol: req.user.rol
     }
+    const userLogged = await userService.getUser(req.user.email);
+    userLogged.last_connection = new Date();
+    userLogged.save();
     req.logger.info(`User logged: ${req.user.email}`);
     res.redirect("/products");
 };

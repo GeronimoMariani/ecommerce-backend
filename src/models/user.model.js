@@ -34,6 +34,18 @@ const userSchema = mongoose.Schema({
     },
     tokenPassword: {
         type: Object,
+    },
+    documents: {
+        type: Array,
+        name: {
+            type: String,
+        },
+        reference: {
+            type: String,
+        }
+    },
+    last_connection: {
+        type: String,
     }
 });
 
