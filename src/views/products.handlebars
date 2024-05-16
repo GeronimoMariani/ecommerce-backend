@@ -4,7 +4,9 @@
         <div class="user">
             <h2>Bienvenido: {{user.first_name}} {{user.last_name}}</h2>
             <button><a href="/current">Mi cuenta</a></button>
-            <button id="logout-btn" type="button">Cerrar sesión</button>
+            <form action="/api/sessions/logout" method="post">
+                <button type="submit">Cerrar sesión</button>
+            </form>
         </div>
     </div>
     <div class="grid-container">

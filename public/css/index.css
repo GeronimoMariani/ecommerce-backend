@@ -44,6 +44,11 @@ a {
     padding: 0.6rem;
 }
 
+.user > form > button {
+    margin-right: 50px;
+    padding: 0.6rem;
+}
+
 /* Item detail */
 
 .grid-container {

@@ -49,7 +49,7 @@ export const logout = (req, res) => {
             }
         });
         req.logger.info("User unlogged");
-        res.send({redirect: "http://localhost:8080/login"});
+        res.redirect("/login");
     } catch (error) {
         req.logger.error(error);
         res.status(400).send({error});
