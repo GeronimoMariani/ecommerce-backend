@@ -1,1 +1,2 @@
 cambiar link de recuperacion de contraseña
+cambiar los link de administracion de usuarios

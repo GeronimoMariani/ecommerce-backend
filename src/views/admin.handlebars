@@ -6,10 +6,8 @@
             <h3>Email: {{this.email}}</h3>
             <h3>Rol: {{this.rol}}</h3>
             <div class="adminButtons">
-                <form class="form-admin" action="/api/users/roles/{{this._id}}" method="post">
-                    <button>Cambiar de rol</button>
-                </form>
-                <button onclick="deleteUser({{this._id}})">Eliminar usuario</button>
+                <button onclick="modifyRol('{{this._id}}')">Cambiar de rol</button>
+                <button onclick="deleteUser('{{this._id}}')">Eliminar usuario</button>
             </div>
         </li>
     {{/each}}
