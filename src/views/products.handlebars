@@ -4,6 +4,9 @@
         <div class="user">
             <h2>Bienvenido: {{user.first_name}} {{user.last_name}}</h2>
             <button><a href="/current">Mi cuenta</a></button>
+            {{#if admin}}
+                <button><a href="/admin">Administrar</a></button>
+            {{/if}}
             <form action="/api/sessions/logout" method="post">
                 <button type="submit">Cerrar sesión</button>
             </form>
@@ -34,5 +37,3 @@
         {{/if}}
     </div>
 </div>
-
-<script src="js/index.js"></script>

@@ -61,4 +61,27 @@ export default class Users {
             return null;
         }
     }
+
+    deleteUserById = async (id) => {
+        try {
+            const result = await userModel.deleteOne({_id: id});
+            return result;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    deleteUsers = async (userIds) => {
+        try {
+            if (!Array.isArray(userIds)) {
+                throw new Error('UserIds debe ser un array');
+            }
+            const result = await userModel.deleteMany({ _id: { $in: userIds } });
+            return result;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
 }

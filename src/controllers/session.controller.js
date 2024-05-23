@@ -72,7 +72,7 @@ export const forgotPassword = async (req, res) => {
             subject: "Cambiar contraseña",
             html: `
                 <h1>Hola!!</h1>
-                <p>Haz clic en este <a href="http://localhost:8080/api/sessions/restore-password/${tokenObj.token}">enlace</a> para restablecer tu contraseña.</p>
+                <p>Haz clic en este <a href="http://localhost:8080/api/sessions/restore-password/${tokenObj.token}">enlace</a> para reestablecer tu contraseña.</p>
             `
         });
         const emailSend = true;

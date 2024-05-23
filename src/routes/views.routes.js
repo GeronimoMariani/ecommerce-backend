@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { productsModel } from "../models/products.model.js";
 import { cartsModel } from "../models/carts.model.js";
-import { checkAuth, checkExistingUser } from "../middlewares/auth.js";
+import { checkAdmin, checkAuth, checkExistingUser } from "../middlewares/auth.js";
 import Users from "../dao/mongo/users.mongo.js";
 
 const userService = new Users();
@@ -17,7 +17,14 @@ viewsRouter.get("/products", checkAuth, async (req, res) => {
         const nextPage = pageNumber + 1;
         products.prevLink = `/products?page=${prevPage}`;
         products.nextLink = `/products?page=${nextPage}`;
-        res.render("products", { products, user: user });
+        const user = await userService.getUser(req.user.email);
+        let admin;
+        if (user.rol === "admin") {
+            admin = true;
+        } else {
+            admin = false;
+        }
+        res.render("products", { products, admin, user: user });
     } catch (error) {
         console.error(error);
         res.status(400).send(error);
@@ -65,7 +72,7 @@ viewsRouter.get("/fail-login", (req, res) => {
 
 viewsRouter.get("/current", async (req, res) => {
     const user = await userService.getUser(req.user.email);
-    let premium
+    let premium;
     if (user.rol === 'premium') {
         premium = true;
     } else {
@@ -77,6 +84,11 @@ viewsRouter.get("/current", async (req, res) => {
 viewsRouter.get("/documents", async (req, res) => {
     const user = await userService.getUser(req.user.email);
     res.render('documents', user);
+});
+
+viewsRouter.get("/admin", checkAdmin, async (req, res) => {
+    const users = await userService.getUsers();
+    res.render('admin', {users});
 });
 
 /* viewsRouter.get("/realtimeproducts", async (req, res) => {

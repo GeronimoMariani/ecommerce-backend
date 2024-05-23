@@ -60,3 +60,10 @@ export const authorizeUser = (req, res, next) => {
         next();
     }
 };
+
+export const checkAdmin = (req, res, next) => {
+    if (req.session?.user?.rol !== 'admin') {
+        return res.redirect('/products');
+    }
+    next();
+}
